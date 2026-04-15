@@ -254,58 +254,72 @@ class ConfigChecker {
                 const timeout = setTimeout(() => {
                     ws.close();
                     resolve({ banned: false, reason: 'Таймаут соединения' });
-                }, 5000);
+                }, 10000);
+                
+                let requestSent = false;
                 
                 ws.onopen = () => {
                     console.info('[ConfigChecker] UMA.SU WebSocket connected');
-                    
-                    // Send request to get punishments
-                    const request = {
-                        type: 'get_punishments',
-                        steamid: steamId
-                    };
-                    
-                    ws.send(JSON.stringify(request));
                 };
                 
                 ws.onmessage = (event) => {
-                    clearTimeout(timeout);
-                    
                     try {
                         const data = JSON.parse(event.data);
                         
                         console.info('[ConfigChecker] UMA.SU response:', data);
                         
-                        // Check if punishments array exists and has items
-                        if (data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
-                            // Found ban(s)
-                            const ban = data.punishments[0];
-                            const reason = ban.reason || 'Забанен';
-                            const expires = ban.expires;
-                            const now = Math.floor(Date.now() / 1000);
+                        // If server sends get_type, respond and then send our request
+                        if (data.type === 'get_type' && !requestSent) {
+                            requestSent = true;
                             
-                            // Check if ban is still active
-                            if (expires > now) {
-                                resolve({
-                                    banned: true,
-                                    reason: reason
-                                });
+                            // Send request to get punishments
+                            const request = {
+                                type: 'get_punishments',
+                                steamid: steamId
+                            };
+                            
+                            console.info('[ConfigChecker] Sending UMA.SU request:', request);
+                            ws.send(JSON.stringify(request));
+                            return;
+                        }
+                        
+                        // Check if this is the punishments response
+                        if (data.type === 'get_punishments' || data.punishments) {
+                            clearTimeout(timeout);
+                            
+                            // Check if punishments array exists and has items
+                            if (data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
+                                // Found ban(s)
+                                const ban = data.punishments[0];
+                                const reason = ban.reason || 'Забанен';
+                                const expires = ban.expires;
+                                const now = Math.floor(Date.now() / 1000);
+                                
+                                // Check if ban is still active
+                                if (expires > now) {
+                                    resolve({
+                                        banned: true,
+                                        reason: reason
+                                    });
+                                } else {
+                                    resolve({
+                                        banned: false,
+                                        reason: 'Бан истек'
+                                    });
+                                }
                             } else {
-                                resolve({
-                                    banned: false,
-                                    reason: 'Бан истек'
-                                });
+                                // No bans found
+                                resolve({ banned: false, reason: 'Не забанен' });
                             }
-                        } else {
-                            // No bans found
-                            resolve({ banned: false, reason: 'Не забанен' });
+                            
+                            ws.close();
                         }
                     } catch (error) {
                         console.error('[ConfigChecker] Error parsing UMA.SU response:', error);
+                        clearTimeout(timeout);
                         resolve({ banned: false, reason: 'Ошибка парсинга' });
+                        ws.close();
                     }
-                    
-                    ws.close();
                 };
                 
                 ws.onerror = (error) => {
