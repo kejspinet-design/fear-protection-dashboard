@@ -73,14 +73,24 @@
                     </div>
                 </div>
                 
-                <!-- Right Column: Recent Reports -->
+                <!-- Right Column: Config.vdf Checker -->
                 <div class="players-section">
                     <div class="section-header">
-                        <h2>Последние репорты</h2>
-                        <span class="section-count" id="reportsCount">0</span>
+                        <h2>Проверка config.vdf</h2>
+                        <span class="section-count" id="configCheckCount">0</span>
                     </div>
-                    <div class="players-list" id="reports-column">
-                        <!-- Recent reports will be rendered here -->
+                    <div class="config-checker-container">
+                        <div class="config-upload-area" id="configUploadArea">
+                            <div class="upload-icon">📁</div>
+                            <p class="upload-text">Перетащите config.vdf сюда</p>
+                            <p class="upload-subtext">или</p>
+                            <label for="configFileInput" class="upload-button">Выбрать файл</label>
+                            <input type="file" id="configFileInput" accept=".vdf,.cfg" style="display: none;">
+                            <p class="upload-hint">Поддерживаются файлы: config.vdf, config.cfg</p>
+                        </div>
+                        <div class="players-list" id="config-check-column" style="display: none;">
+                            <!-- Checked players will be rendered here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -112,6 +122,7 @@
     <script src="js/AutoRefreshTimer.js"></script>
     <script src="js/TimeUpdater.js"></script>
     <script src="js/ModalManager.js"></script>
+    <script src="js/ConfigChecker.js"></script>
     <script src="js/App.js"></script>
 </body>
 </html>

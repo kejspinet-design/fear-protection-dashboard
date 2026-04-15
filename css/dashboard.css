@@ -1345,3 +1345,210 @@ body.loading::after {
         font-size: 13px;
     }
 }
+
+/* ========== CONFIG.VDF CHECKER ========== */
+.config-checker-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.config-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    border: 2px dashed rgba(249, 115, 22, 0.3);
+    border-radius: 16px;
+    background: rgba(26, 11, 46, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 300px;
+}
+
+.config-upload-area:hover {
+    border-color: rgba(249, 115, 22, 0.6);
+    background: rgba(26, 11, 46, 0.6);
+    transform: translateY(-2px);
+}
+
+.config-upload-area.drag-over {
+    border-color: #F97316;
+    background: rgba(249, 115, 22, 0.15);
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.upload-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #F1F1F1;
+    margin-bottom: 8px;
+}
+
+.upload-subtext {
+    font-size: 14px;
+    color: #9CA3AF;
+    margin-bottom: 16px;
+}
+
+.upload-button {
+    background: linear-gradient(135deg, #F97316 0%, #F43F5E 100%);
+    color: #fff;
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.upload-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+}
+
+.upload-button:active {
+    transform: translateY(0);
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 16px;
+}
+
+.config-processing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 300px;
+}
+
+.processing-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(249, 115, 22, 0.2);
+    border-top-color: #F97316;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.processing-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #F1F1F1;
+    margin-bottom: 8px;
+}
+
+.processing-subtext {
+    font-size: 14px;
+    color: #9CA3AF;
+}
+
+.ban-status-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.ban-status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.ban-status-card.banned {
+    border-left: 4px solid #ff4757;
+    background: rgba(255, 71, 87, 0.05);
+}
+
+.ban-status-card.clean {
+    border-left: 4px solid #00d4aa;
+    background: rgba(0, 212, 170, 0.05);
+}
+
+.ban-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.ban-status-steamid {
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.ban-status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ban-status-badge.banned {
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.4);
+}
+
+.ban-status-badge.clean {
+    background: rgba(0, 212, 170, 0.2);
+    color: #00d4aa;
+    border: 1px solid rgba(0, 212, 170, 0.4);
+}
+
+.ban-status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ban-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.ban-detail-label {
+    color: var(--text-muted);
+    min-width: 80px;
+}
+
+.ban-detail-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.ban-detail-value.banned {
+    color: #ff4757;
+}
+
+.ban-detail-value.clean {
+    color: #00d4aa;
+}
+

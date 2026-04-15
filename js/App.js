@@ -17,6 +17,7 @@ class App {
         this.renderer = new Renderer(this.timeFormatter);
         this.timeUpdater = new TimeUpdater(this.timeFormatter);
         this.modalManager = new ModalManager();
+        this.configChecker = new ConfigChecker(this.apiClient);
         
         // Auto-refresh timer (30 seconds)
         this.autoRefreshTimer = new AutoRefreshTimer(30000, () => {
@@ -129,9 +130,8 @@ class App {
                 console.warn('[App] No Steam IDs found in server data');
             }
             
-            // Fetch reports - temporarily disabled due to API endpoint not available
-            // TODO: Enable when /reports endpoint is available
-            console.warn('[App] Reports endpoint not available, skipping reports fetch');
+            // Fetch reports - removed, using config checker instead
+            console.info('[App] Reports feature replaced with config checker');
             this.stateManager.updateReports([]);
             
             console.info('[App] Data fetch completed');
@@ -159,7 +159,6 @@ class App {
         // Get data from state manager
         const newAccounts = this.stateManager.getNewAccounts();
         const vacBannedPlayers = this.stateManager.getVACBannedPlayers();
-        const recentReports = this.stateManager.getRecentReports();
         
         const stats = {
             totalServers: this.stateManager.getTotalServers(),
@@ -169,7 +168,6 @@ class App {
         // Render columns
         this.renderer.renderNewAccountsColumn(newAccounts);
         this.renderer.renderVACBansColumn(vacBannedPlayers);
-        this.renderer.renderReportsColumn(recentReports);
         
         // Render header
         this.renderer.renderStatistics(stats);
