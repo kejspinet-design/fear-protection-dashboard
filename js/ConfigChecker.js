@@ -289,23 +289,31 @@ class ConfigChecker {
                             
                             // Check if punishments array exists and has items
                             if (data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
-                                // Found ban(s)
-                                const ban = data.punishments[0];
-                                const reason = ban.reason || 'Забанен';
-                                const expires = ban.expires;
-                                const now = Math.floor(Date.now() / 1000);
+                                // Filter punishments by our steamid
+                                const userBans = data.punishments.filter(ban => ban.steamid === steamId);
                                 
-                                // Check if ban is still active
-                                if (expires > now) {
-                                    resolve({
-                                        banned: true,
-                                        reason: reason
-                                    });
+                                if (userBans.length > 0) {
+                                    // Found ban(s) for this user
+                                    const ban = userBans[0];
+                                    const reason = ban.reason || 'Забанен';
+                                    const expires = ban.expires;
+                                    const now = Math.floor(Date.now() / 1000);
+                                    
+                                    // Check if ban is still active
+                                    if (expires > now) {
+                                        resolve({
+                                            banned: true,
+                                            reason: reason
+                                        });
+                                    } else {
+                                        resolve({
+                                            banned: false,
+                                            reason: 'Бан истек'
+                                        });
+                                    }
                                 } else {
-                                    resolve({
-                                        banned: false,
-                                        reason: 'Бан истек'
-                                    });
+                                    // No bans found for this user
+                                    resolve({ banned: false, reason: 'Не забанен' });
                                 }
                             } else {
                                 // No bans found
