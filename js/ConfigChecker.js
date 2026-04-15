@@ -196,22 +196,39 @@ class ConfigChecker {
      */
     async checkFearBan(steamId) {
         try {
-            // TODO: Replace with actual Fear API endpoint for ban check
-            // For now, return mock data
-            const response = await fetch(`${this.apiClient.config.fearApiBase}/bans/${steamId}`);
+            const response = await fetch(`${this.apiClient.config.fearApiBase}/punishments/search?q=${steamId}&page=1&limit=10&type=1`, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
             
             if (!response.ok) {
+                console.warn(`[ConfigChecker] Fear API returned ${response.status} for ${steamId}`);
                 return { banned: false, reason: 'Не забанен' };
             }
             
             const data = await response.json();
-            return {
-                banned: data.banned || false,
-                reason: data.reason || 'Не забанен'
-            };
+            
+            // Check if any bans found
+            if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                // Found ban(s)
+                const ban = data.data[0]; // Get first ban
+                const reason = ban.reason || 'Забанен';
+                return {
+                    banned: true,
+                    reason: reason
+                };
+            } else {
+                // No bans found
+                return { banned: false, reason: 'Не забанен' };
+            }
         } catch (error) {
             console.warn('[ConfigChecker] Fear API check failed:', error);
-            return { banned: false, reason: 'Не забанен' };
+            return { banned: false, reason: 'Ошибка проверки' };
         }
     }
 
@@ -220,22 +237,13 @@ class ConfigChecker {
      */
     async checkUmaBan(steamId) {
         try {
-            // TODO: Replace with actual UMA.SU API endpoint
-            // For now, return mock data
-            const response = await fetch(`https://uma.su/api/bans/${steamId}`);
-            
-            if (!response.ok) {
-                return { banned: false, reason: 'Не забанен' };
-            }
-            
-            const data = await response.json();
-            return {
-                banned: data.banned || false,
-                reason: data.reason || 'Не забанен'
-            };
+            // TODO: Replace with actual UMA.SU API endpoint when available
+            // For now, return "not banned" as UMA.SU API is not yet configured
+            console.info('[ConfigChecker] UMA.SU check skipped (API not configured)');
+            return { banned: false, reason: 'API недоступен' };
         } catch (error) {
             console.warn('[ConfigChecker] UMA.SU API check failed:', error);
-            return { banned: false, reason: 'Не забанен' };
+            return { banned: false, reason: 'Ошибка проверки' };
         }
     }
 

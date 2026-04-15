@@ -31,8 +31,11 @@ module.exports = async (req, res) => {
 
     // Determine target URL
     let targetUrl;
+    let isFearApi = false;
+    
     if (requestUrl.startsWith('/api/fear/')) {
         targetUrl = FEAR_API + requestUrl.replace('/api/fear', '');
+        isFearApi = true;
     } else if (requestUrl.startsWith('/api/steam/')) {
         targetUrl = STEAM_API + requestUrl.replace('/api/steam', '');
     } else {
@@ -43,7 +46,7 @@ module.exports = async (req, res) => {
     console.log(`[Proxy] Forwarding to: ${targetUrl}`);
 
     try {
-        const data = await makeRequest(targetUrl, requestUrl.startsWith('/api/fear/'));
+        const data = await makeRequest(targetUrl, isFearApi);
         res.status(200).json(data);
     } catch (error) {
         console.error(`[Proxy] Error:`, error.message);
