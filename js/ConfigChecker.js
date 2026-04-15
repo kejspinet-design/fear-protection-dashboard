@@ -213,15 +213,24 @@ class ConfigChecker {
             
             const data = await response.json();
             
-            // Check if any bans found
-            if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+            // Check if any bans found in punishments array
+            if (data && data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
                 // Found ban(s)
-                const ban = data.data[0]; // Get first ban
+                const ban = data.punishments[0]; // Get first ban
                 const reason = ban.reason || 'Забанен';
-                return {
-                    banned: true,
-                    reason: reason
-                };
+                const status = ban.status; // 1 = active, 0 = expired
+                
+                if (status === 1) {
+                    return {
+                        banned: true,
+                        reason: reason
+                    };
+                } else {
+                    return {
+                        banned: false,
+                        reason: 'Бан истек'
+                    };
+                }
             } else {
                 // No bans found
                 return { banned: false, reason: 'Не забанен' };

@@ -50,6 +50,10 @@ const server = http.createServer((req, res) => {
     if (path.startsWith('/api/fear/')) {
         // Fear Project API
         targetUrl = FEAR_API + path.replace('/api/fear', '');
+        // Add query parameters for Fear API
+        if (parsedUrl.search) {
+            targetUrl += parsedUrl.search;
+        }
     } else if (path.startsWith('/api/steam/')) {
         // Steam API
         targetUrl = STEAM_API + path.replace('/api/steam', '');
