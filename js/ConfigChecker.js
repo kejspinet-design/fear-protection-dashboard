@@ -272,10 +272,12 @@ class ConfigChecker {
                         if (data.type === 'get_type' && !requestSent) {
                             requestSent = true;
                             
-                            // Send request to get punishments
+                            // Send request to get punishments with search parameter
                             const request = {
                                 type: 'get_punishments',
-                                steamid: steamId
+                                page: 1,
+                                punish_type: 0,
+                                search: steamId
                             };
                             
                             console.info('[ConfigChecker] Sending UMA.SU request:', request);
@@ -283,37 +285,35 @@ class ConfigChecker {
                             return;
                         }
                         
+                        // Ignore get_punishments_pages response (just page count)
+                        if (data.type === 'get_punishments_pages') {
+                            console.info('[ConfigChecker] UMA.SU pages count:', data.count);
+                            return;
+                        }
+                        
                         // Check if this is the punishments response
-                        if (data.type === 'get_punishments' || data.punishments) {
+                        if (data.type === 'get_punishments' && data.punishments) {
                             clearTimeout(timeout);
                             
                             // Check if punishments array exists and has items
-                            if (data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
-                                // Filter punishments by our steamid
-                                const userBans = data.punishments.filter(ban => ban.steamid === steamId);
+                            if (Array.isArray(data.punishments) && data.punishments.length > 0) {
+                                // Found ban(s) - since we searched by steamid, all results are for this user
+                                const ban = data.punishments[0];
+                                const reason = ban.reason || 'Забанен';
+                                const expires = ban.expires;
+                                const now = Math.floor(Date.now() / 1000);
                                 
-                                if (userBans.length > 0) {
-                                    // Found ban(s) for this user
-                                    const ban = userBans[0];
-                                    const reason = ban.reason || 'Забанен';
-                                    const expires = ban.expires;
-                                    const now = Math.floor(Date.now() / 1000);
-                                    
-                                    // Check if ban is still active
-                                    if (expires > now) {
-                                        resolve({
-                                            banned: true,
-                                            reason: reason
-                                        });
-                                    } else {
-                                        resolve({
-                                            banned: false,
-                                            reason: 'Бан истек'
-                                        });
-                                    }
+                                // Check if ban is still active
+                                if (expires > now) {
+                                    resolve({
+                                        banned: true,
+                                        reason: reason
+                                    });
                                 } else {
-                                    // No bans found for this user
-                                    resolve({ banned: false, reason: 'Не забанен' });
+                                    resolve({
+                                        banned: false,
+                                        reason: 'Бан истек'
+                                    });
                                 }
                             } else {
                                 // No bans found
