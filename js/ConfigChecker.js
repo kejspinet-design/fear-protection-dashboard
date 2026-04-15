@@ -242,18 +242,88 @@ class ConfigChecker {
     }
 
     /**
-     * Check UMA.SU ban status
+     * Check UMA.SU ban status via WebSocket
      */
     async checkUmaBan(steamId) {
-        try {
-            // TODO: Replace with actual UMA.SU API endpoint when available
-            // For now, return "not banned" as UMA.SU API is not yet configured
-            console.info('[ConfigChecker] UMA.SU check skipped (API not configured)');
-            return { banned: false, reason: 'API недоступен' };
-        } catch (error) {
-            console.warn('[ConfigChecker] UMA.SU API check failed:', error);
-            return { banned: false, reason: 'Ошибка проверки' };
-        }
+        return new Promise((resolve) => {
+            try {
+                // Create WebSocket connection
+                const ws = new WebSocket('wss://yooma.su/api');
+                
+                // Set timeout for connection
+                const timeout = setTimeout(() => {
+                    ws.close();
+                    resolve({ banned: false, reason: 'Таймаут соединения' });
+                }, 5000);
+                
+                ws.onopen = () => {
+                    console.info('[ConfigChecker] UMA.SU WebSocket connected');
+                    
+                    // Send request to get punishments
+                    const request = {
+                        type: 'get_punishments',
+                        steamid: steamId
+                    };
+                    
+                    ws.send(JSON.stringify(request));
+                };
+                
+                ws.onmessage = (event) => {
+                    clearTimeout(timeout);
+                    
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        console.info('[ConfigChecker] UMA.SU response:', data);
+                        
+                        // Check if punishments array exists and has items
+                        if (data.punishments && Array.isArray(data.punishments) && data.punishments.length > 0) {
+                            // Found ban(s)
+                            const ban = data.punishments[0];
+                            const reason = ban.reason || 'Забанен';
+                            const expires = ban.expires;
+                            const now = Math.floor(Date.now() / 1000);
+                            
+                            // Check if ban is still active
+                            if (expires > now) {
+                                resolve({
+                                    banned: true,
+                                    reason: reason
+                                });
+                            } else {
+                                resolve({
+                                    banned: false,
+                                    reason: 'Бан истек'
+                                });
+                            }
+                        } else {
+                            // No bans found
+                            resolve({ banned: false, reason: 'Не забанен' });
+                        }
+                    } catch (error) {
+                        console.error('[ConfigChecker] Error parsing UMA.SU response:', error);
+                        resolve({ banned: false, reason: 'Ошибка парсинга' });
+                    }
+                    
+                    ws.close();
+                };
+                
+                ws.onerror = (error) => {
+                    clearTimeout(timeout);
+                    console.error('[ConfigChecker] UMA.SU WebSocket error:', error);
+                    resolve({ banned: false, reason: 'Ошибка соединения' });
+                    ws.close();
+                };
+                
+                ws.onclose = () => {
+                    clearTimeout(timeout);
+                };
+                
+            } catch (error) {
+                console.warn('[ConfigChecker] UMA.SU check failed:', error);
+                resolve({ banned: false, reason: 'Ошибка проверки' });
+            }
+        });
     }
 
     /**
