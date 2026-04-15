@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection</title>
+    <link rel="icon" type="image/x-icon" href="app.ico">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Imports -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <!-- Left: Logo and Title -->
+                <div class="header-title-section">
+                    <h1 class="logo-container">
+                        <img src="app.ico" alt="Fear Protection" style="width: 44px; height: 44px; border-radius: 8px;">
+                        <span class="logo-text">Fear Protection</span>
+                    </h1>
+                    <!-- Last Update Timestamp -->
+                    <div class="last-update" id="lastUpdate">Последнее обновление: --.--.---- --:--:--</div>
+                </div>
+                
+                <!-- Right: Statistics -->
+                <div class="header-info">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Серверов:</span>
+                            <span class="stat-value" id="serverCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Игроков:</span>
+                            <span class="stat-value" id="playerCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Three-Column Grid Layout -->
+            <div class="players-container-split">
+                <!-- Left Column: New Accounts -->
+                <div class="players-section">
+                    <div class="section-header">
+                        <h2>Новореги</h2>
+                        <span class="section-count" id="newAccountsCount">0</span>
+                    </div>
+                    <div class="players-list" id="new-accounts-column">
+                        <!-- New accounts will be rendered here -->
+                    </div>
+                </div>
+                
+                <!-- Middle Column: VAC Bans -->
+                <div class="players-section">
+                    <div class="section-header">
+                        <h2>VAC Баны</h2>
+                        <span class="section-count" id="vacBansCount">0</span>
+                    </div>
+                    <div class="players-list" id="vac-bans-column">
+                        <!-- VAC banned players will be rendered here -->
+                    </div>
+                </div>
+                
+                <!-- Right Column: Recent Reports -->
+                <div class="players-section">
+                    <div class="section-header">
+                        <h2>Последние репорты</h2>
+                        <span class="section-count" id="reportsCount">0</span>
+                    </div>
+                    <div class="players-list" id="reports-column">
+                        <!-- Recent reports will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-copyright">
+                <span class="footer-text">© 2026 <span>Fear Protection</span> • Все права защищены</span>
+            </div>
+            <div class="footer-links">
+                <a href="#about" class="footer-link">О проекте</a>
+                <a href="#privacy" class="footer-link">Конфиденциальность</a>
+                <a href="#terms" class="footer-link">Условия</a>
+            </div>
+            <div class="footer-version">
+                Версия 1.0.0
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript Modules -->
+    <script src="js/TimeFormatter.js"></script>
+    <script src="js/APIClient.js"></script>
+    <script src="js/StateManager.js"></script>
+    <script src="js/Renderer.js"></script>
+    <script src="js/AutoRefreshTimer.js"></script>
+    <script src="js/TimeUpdater.js"></script>
+    <script src="js/ModalManager.js"></script>
+    <script src="js/App.js"></script>
+</body>
+</html>

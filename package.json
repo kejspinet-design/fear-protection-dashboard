@@ -1,0 +1,17 @@
+{
+  "name": "fear-protection-dashboard",
+  "version": "1.0.0",
+  "description": "Fear Protection Dashboard with CORS Proxy",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "dev": "node proxy-server.js"
+  },
+  "keywords": [
+    "fear-protection",
+    "dashboard",
+    "cors-proxy"
+  ],
+  "author": "",
+  "license": "MIT"
+}
